@@ -140,34 +140,54 @@ class ProjectFile:
         if "Frequency setup" in sections:
             keys = list(config['Frequency setup'].keys())
             if "frequency min" in keys and "frequency max" in keys and "frequency step" in keys:
-                f_min = config['Frequency setup']['frequency min']
-                f_max = config['Frequency setup']['frequency max']
-                f_step = config['Frequency setup']['frequency step']
+                config_freq = config['Frequency setup']
+                f_min = config_freq['frequency min']
+                f_max = config_freq['frequency max']
+                f_step = config_freq['frequency step']
 
         if "Global damping setup" in sections:
             keys = list(config['Global damping setup'].keys())
             if "alpha_v" in keys and "beta_v" in keys and "alpha_h" in keys and "beta_h" in keys:
-                alpha_v = config['Global damping setup']['alpha_v']
-                beta_v = config['Global damping setup']['beta_v']
-                alpha_h = config['Global damping setup']['alpha_h']
-                beta_h = config['Global damping setup']['beta_h']
+                config_dmp = config['Global damping setup']
+                alpha_v = config_dmp['alpha_v']
+                beta_v = config_dmp['beta_v']
+                alpha_h = config_dmp['alpha_h']
+                beta_h = config_dmp['beta_h']
         
         preferences = {}
         if "User interface preferences" in sections:
-            background_color = config['User interface preferences']['background-color']
-            font_color = config['User interface preferences']['font-color']
-            OpenPulse_logo = config['User interface preferences']['openpulse logo']
-            mopt_logo = config['User interface preferences']['mopt logo']
-            reference_scale = config['User interface preferences']['reference scale']
-
+            config_preferences = config['User interface preferences']
+            background_color = config_preferences['background color']
+            font_color = config_preferences['font color']
+            nodes_color = config_preferences['nodes color']
+            lines_color = config_preferences['lines color']
+            elements_color = config_preferences['elements color']
+            transparency = float(config_preferences['transparency'])
+            OpenPulse_logo = config_preferences['openpulse logo']
+            mopt_logo = config_preferences['mopt logo']
+            reference_scale = config_preferences['reference scale']
+    
             background_color = background_color[1:-1].split(",")
             background_color = tuple([float(val) for val in background_color])
             
             font_color = font_color[1:-1].split(",")
             font_color = tuple([float(val) for val in font_color])
+
+            nodes_color = nodes_color[1:-1].split(",")
+            nodes_color = tuple([float(val) for val in nodes_color])
+
+            lines_color = lines_color[1:-1].split(",")
+            lines_color = tuple([float(val) for val in lines_color])
+
+            elements_color = elements_color[1:-1].split(",")
+            elements_color = tuple([float(val) for val in elements_color])
         
             preferences = { 'background_color' : background_color,
                             'font_color' : font_color,
+                            'nodes_color' :  nodes_color,
+                            'lines_color' : lines_color,
+                            'elements_color' : elements_color,
+                            'transparency' : transparency,
                             'OpenPulse_logo' : bool(int(OpenPulse_logo)),
                             'mopt_logo' : bool(int(mopt_logo)),
                             'reference_scale' : bool(int(reference_scale)) }

@@ -395,13 +395,14 @@ class opvRenderer(vtkRendererBase):
         if any([v is None for v in visual]):
             return
         
-        nodesColor = (255, 255, 63)
-        linesColor = (255, 255, 255)
-        tubesColor = (255, 255, 255)
+        # nodesColor = (255, 255, 63)
+        # linesColor = (255, 255, 255)
+        # tubesColor = (255, 255, 255)
 
-        self.opvNodes.setColor(nodesColor)
-        self.opvLines.setColor(linesColor)
-        self.opvTubes.setColor(tubesColor)
+
+        self.opvNodes.setColor(self.nodes_color)
+        self.opvLines.setColor(self.lines_color)
+        self.opvTubes.setColor(self.elements_color)
 
     def call_update_in_QDialogs_if_highlighted(self):
         self.opv.updateDialogs()

@@ -255,7 +255,6 @@ class RendererMesh(vtkRendererBase):
         actor.GetProperty().SetColor(0.7,0.7,0.8)
         actor.GetProperty().SetOpacity(0.06)
 
-        actor.GetProperty().SetOpacity(0.06)
         actor.GetProperty().VertexVisibilityOn()
         actor.GetProperty().SetLineWidth(2)
 

@@ -34,6 +34,7 @@ class LoadProjectInput(QDialog):
                 self.project.load_project(self.complete_project_path)
                 if self.project.preferences:
                     self.opv.setUserInterfacePreferences(self.project.preferences)
+                    self.project.elements_transparency = self.project.preferences['transparency']
                 self.config.writeRecentProject(self.project.get_project_name(), self.complete_project_path)
                 self.complete = True
                 self.project.time_to_load_or_create_project = time() - t0

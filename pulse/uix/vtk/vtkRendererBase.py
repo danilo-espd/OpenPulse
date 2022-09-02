@@ -5,6 +5,10 @@ class vtkRendererBase(ABC):
     def __init__(self, style):
         super().__init__()
 
+        self.nodes_color = (255, 255, 63)
+        self.lines_color = (255, 255, 255)
+        self.elements_color = (0, 255, 255)
+
         self.background_color = (0,0,0)
         self._renderer = vtk.vtkRenderer()
         self._renderer.SetBackground(self.background_color)
@@ -92,6 +96,15 @@ class vtkRendererBase(ABC):
         self._imageReader_pulse.Update()
         self._imageReader_mopt.Update()
     
+    def changeNodesColor(self, color):
+        self.nodes_color = color 
+    
+    def changeLinesColor(self, color):
+        self.lines_color = color
+
+    def changeElementsColor(self, color):
+        self.elements_color = color 
+
     def changeFontColor(self, color):
         self.textProperty.SetColor(color)
 

@@ -31,23 +31,34 @@ class OPVUi(QVTKRenderWindowInteractor):
     def defaultPreferences(self):
         self.background_color = (0,0,0)
         self.font_color = (1,1,1)
+        self.nodes_color = (255, 255, 63)
+        self.lines_color = (255, 255, 255)
+        self.elements_color = (0, 255, 255)
         self.add_OpenPulse_logo = True
         self.add_MOPT_logo = True
         self.show_reference_scale = True
 
     def setUserInterfacePreferences(self, preferences):
         if preferences:
+            #
             self.background_color = preferences['background_color']
             self.font_color = preferences['font_color']
+            self.nodes_color = preferences['nodes_color']
+            self.lines_color = preferences['lines_color']
+            self.elements_color = preferences['elements_color']
             self.add_OpenPulse_logo = preferences['OpenPulse_logo']
             self.add_MOPT_logo = preferences['mopt_logo']
             self.show_reference_scale = preferences['reference_scale']
+            #
             self.opvRenderer.changeBackgroundColor(self.background_color)
             self.opvAnalysisRenderer.changeBackgroundColor(self.background_color)
             self.opvRenderer.changeFontColor(self.font_color)
             self.opvAnalysisRenderer.changeFontColor(self.font_color)
             self.opvRenderer.changeReferenceScaleFontColor(self.font_color)
             self.opvAnalysisRenderer.changeReferenceScaleFontColor(self.font_color)
+            self.opvRenderer.changeNodesColor(self.nodes_color)
+            self.opvRenderer.changeLinesColor(self.lines_color)
+            self.opvRenderer.changeElementsColor(self.elements_color)
         
     def clearRendereres(self):
         self.GetRenderWindow().RemoveRenderer(self.opvRenderer.getRenderer())

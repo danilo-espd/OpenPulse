@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QToolButton, QLineEdit, QDialog, QTabWidget, QLabel, QCheckBox, QRadioButton, QWidget
+from PyQt5.QtWidgets import QToolButton, QPushButton, QLineEdit, QDialog, QTabWidget, QLabel, QCheckBox, QRadioButton, QWidget, QSlider
 from data.user_input.project.printMessageInput import PrintMessageInput
+from data.user_input.model.setup.pickColorInput import PickColorInput
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
@@ -24,6 +25,11 @@ class RendererUserPreferencesInput(QDialog):
         self.opv = opv
         self.opv.setInputObject(self)
 
+        self.cache_setup = [self.opv.opvRenderer.nodes_color,
+                            self.opv.opvRenderer.lines_color,
+                            self.opv.opvRenderer.elements_color,
+                            self.project.elements_transparency]
+
         self.checkBox_nodes_viewer = self.findChild(QCheckBox, 'checkBox_nodes_viewer')
         self.checkBox_elements_viewer = self.findChild(QCheckBox, 'checkBox_elements_viewer')
         self.checkBox_acoustic_symbols_viewer = self.findChild(QCheckBox, 'checkBox_acoustic_symbols_viewer')
@@ -46,12 +52,30 @@ class RendererUserPreferencesInput(QDialog):
         self.tab_hide_show = self.tabWidget_main.findChild(QWidget, 'tab_hide_show')
         self.tab_user_preferences = self.tabWidget_main.findChild(QWidget, 'tab_user_preferences')
         self.tabWidget_main.removeTab(0)
+
+        self.lineEdit_nodes_color = self.findChild(QLineEdit, 'lineEdit_nodes_color')
+        self.lineEdit_lines_color = self.findChild(QLineEdit, 'lineEdit_lines_color')
+        self.lineEdit_elements_color = self.findChild(QLineEdit, 'lineEdit_elements_color')
+
+        self.lineEdit_elements_color_2 = self.findChild(QLineEdit, 'lineEdit_elements_color_2')
+        self.horizontalSlider = self.findChild(QSlider, 'horizontalSlider')
+        self.update_slider_tick()
+        self.horizontalSlider.valueChanged.connect(self.update_transparency_value)
+
+        self.pushButton_nodes_colorPicker = self.findChild(QPushButton, 'pushButton_pickColor_nodes')
+        self.pushButton_lines_colorPicker = self.findChild(QPushButton, 'pushButton_pickColor_lines')
+        self.pushButton_elements_colorPicker = self.findChild(QPushButton, 'pushButton_pickColor_elements')
+
+        self.pushButton_nodes_colorPicker.clicked.connect(self.update_nodes_color)
+        self.pushButton_lines_colorPicker.clicked.connect(self.update_lines_color)
+        self.pushButton_elements_colorPicker.clicked.connect(self.update_elements_color)
         
         self.toolButton_confirm = self.findChild(QToolButton, 'toolButton_confirm')
         self.toolButton_confirm.clicked.connect(self.confirm_and_update_user_preferences)
         self.load_background_color_state()
         self.load_logo_state()
         self.load_reference_scale_state()
+        self.load_nodes_lines_elements_color_state()
         # self.load_plot_state()
         # self.load_selection_state()
         self.exec()
@@ -172,6 +196,30 @@ class RendererUserPreferencesInput(QDialog):
     def load_reference_scale_state(self):
         self.checkBox_reference_scale.setChecked(self.opv.show_reference_scale)
 
+    def load_nodes_lines_elements_color_state(self):
+        
+        self.nodes_color = self.opv.opvRenderer.nodes_color
+        self.lines_color = self.opv.opvRenderer.lines_color
+        self.elements_color = self.opv.opvRenderer.elements_color
+
+        str_color = str(self.nodes_color)[1:-1]
+        self.lineEdit_nodes_color.setStyleSheet(f"background-color: rgb({str_color});\n color: rgb({str_color});")
+
+        str_color = str(self.lines_color)[1:-1]
+        self.lineEdit_lines_color.setStyleSheet(f"background-color: rgb({str_color});\n color: rgb({str_color});")
+
+        str_color = str(self.elements_color)[1:-1]
+        self.lineEdit_elements_color.setStyleSheet(f"background-color: rgb({str_color});\n color: rgb({str_color});")
+
+    def update_transparency_value(self):
+        self.transparency = (self.horizontalSlider.value()/100)
+        self.lineEdit_elements_color_2.setText(str(self.transparency))
+
+    def update_slider_tick(self):
+        value = int(100*self.project.elements_transparency)
+        self.horizontalSlider.setValue(value)
+        self.lineEdit_elements_color_2.setText(str(self.project.elements_transparency))
+
     def update_reference_scale_state(self):
         self.opv.show_reference_scale = self.checkBox_reference_scale.isChecked()
         self.opv.opvRenderer._createScaleBar()
@@ -187,26 +235,76 @@ class RendererUserPreferencesInput(QDialog):
         self.opv.opvRenderer._createLogos(OpenPulse=self.opv.add_OpenPulse_logo, MOPT=self.opv.add_MOPT_logo)
         self.opv.opvAnalysisRenderer._createLogos(OpenPulse=self.opv.add_OpenPulse_logo, MOPT=self.opv.add_MOPT_logo)
 
+    def update_nodes_color(self):
+        read = PickColorInput()
+        if read.complete:
+            self.nodes_color = tuple(read.color)
+            str_color = str(self.nodes_color)[1:-1]
+            self.lineEdit_nodes_color.setStyleSheet(f"background-color: rgb({str_color});\n color: rgb({str_color});")
+        else:
+            return        
+        
+    def update_lines_color(self):
+        read = PickColorInput()
+        if read.complete:
+            self.lines_color = tuple(read.color)
+            str_color = str(self.lines_color)[1:-1]
+            self.lineEdit_lines_color.setStyleSheet(f"background-color: rgb({str_color});\n color: rgb({str_color});")
+        else:
+            return
+
+    def update_elements_color(self):
+        read = PickColorInput()
+        if read.complete:
+            self.elements_color = tuple(read.color)
+            str_color = str(self.elements_color)[1:-1]
+            self.lineEdit_elements_color.setStyleSheet(f"background-color: rgb({str_color});\n color: rgb({str_color});")
+        else:
+            return        
+
+    def update_nodes_lines_elements_colors(self):
+        self.opv.opvRenderer.changeNodesColor(self.nodes_color)
+        self.opv.opvRenderer.changeLinesColor(self.lines_color)
+        self.opv.opvRenderer.changeElementsColor(self.elements_color)
+
     def confirm_and_update_user_preferences(self):
         self.update_plot_state()
         self.update_selection_state()
         self.update_logo_state()
         self.update_background_color_state()
         self.update_reference_scale_state()
-        preferences = { 'background-color' : self.opv.background_color,
-                        'font-color' : self.opv.font_color,
+        self.update_nodes_lines_elements_colors()
+        self.update_transparency_value()
+
+        preferences = { 'background color' : self.opv.background_color,
+                        'font color' : self.opv.font_color,
+                        'nodes color' : self.opv.opvRenderer.nodes_color,
+                        'lines color' : self.opv.opvRenderer.lines_color,
+                        'elements color' : self.opv.opvRenderer.elements_color,
+                        'transparency' : self.transparency,
                         'OpenPulse logo' : int(self.opv.add_OpenPulse_logo),
                         'mopt logo' : int(self.opv.add_MOPT_logo),
                         'Reference scale' : int(self.opv.show_reference_scale) }
+        
         self.project.add_user_preferences_to_file(preferences)
-        # self.update_renders()
+        self.project.elements_transparency = self.transparency
+        
+        self.update_renders()
         self.close()
 
     def update_renders(self):
-        self.opv.updateRendererMesh()
-        if self.opv.change_plot_to_mesh:
-            self.opv.changePlotToMesh()
-        elif self.opv.change_plot_to_entities:
-            self.opv.changePlotToEntities()
-        elif self.opv.change_plot_to_entities_with_cross_section:
-            self.opv.changePlotToEntitiesWithCrossSection()
+
+        final_setup = [ self.opv.opvRenderer.nodes_color,
+                        self.opv.opvRenderer.lines_color,
+                        self.opv.opvRenderer.elements_color,
+                        self.project.elements_transparency]
+
+        if final_setup != self.cache_setup:
+
+            self.opv.updateRendererMesh()
+            if self.opv.change_plot_to_mesh:
+                self.opv.changePlotToMesh()
+            elif self.opv.change_plot_to_entities:
+                self.opv.changePlotToEntities()
+            elif self.opv.change_plot_to_entities_with_cross_section:
+                self.opv.changePlotToEntitiesWithCrossSection()
