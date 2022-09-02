@@ -28,6 +28,7 @@ class Project:
         self.file = ProjectFile()
         self._project_name = ""
         self.project_folder_path = ""    
+        self.elements_transparency = 0.8 
         self.reset_info()
 
     def reset_info(self):
@@ -56,7 +57,6 @@ class Project:
         self.setup_analysis_complete = False
         self.none_project_action = False
         self.stress_stiffening_enabled = False
-        self.elements_transparency = 0.8
 
         self.time_to_load_or_create_project = 0
         self.time_to_checking_entries = 0

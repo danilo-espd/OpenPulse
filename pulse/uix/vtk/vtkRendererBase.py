@@ -7,7 +7,7 @@ class vtkRendererBase(ABC):
 
         self.nodes_color = (255, 255, 63)
         self.lines_color = (255, 255, 255)
-        self.elements_color = (0, 255, 255)
+        self.elements_color = (255, 255, 255)
 
         self.background_color = (0,0,0)
         self._renderer = vtk.vtkRenderer()
