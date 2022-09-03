@@ -3,6 +3,7 @@ from pulse.utils import get_new_path, create_new_folder, check_is_there_a_group_
 from pulse.preprocessing.preprocessor import Preprocessor
 from pulse.processing.solution_structural import SolutionStructural
 from pulse.processing.solution_acoustic import SolutionAcoustic
+from pulse.postprocessing.read_data import ReadData
 from pulse.preprocessing.entity import Entity
 from pulse.preprocessing.cross_section import CrossSection
 from pulse.projectFile import ProjectFile
@@ -44,6 +45,7 @@ class Project:
         self.f_max = 0
         self.f_step = 0
         self.list_frequencies = []
+        self.natural_frequencies_acoustic = []
         self.natural_frequencies_structural = []
         self.imported_table_frequency_setup = False
         self.solution_structural = None
@@ -123,6 +125,7 @@ class Project:
             self.load_project_files()
         LoadingScreen('Loading Project', target=callback)
         self.preprocessor.get_list_edge_nodes(self.file._element_size)
+        ReadData(self)
     
     def initial_load_project_actions(self, project_file_path):
         try:
@@ -289,6 +292,12 @@ class Project:
             base_folders = os.listdir(self.file._imported_data_folder_path).copy()
             if len(base_folders) == 0:
                 rmtree(self.file._imported_data_folder_path)
+
+    def remove_solution_data_files(self):
+        filename = "solution_data"
+        file_path = get_new_path(self.file._project_path, filename)
+        if os.path.exists(file_path):
+            rmtree(file_path)
 
     def process_geometry_and_mesh(self, tolerance=1e-6):
         if self.file.get_import_type() == 0:

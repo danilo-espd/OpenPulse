@@ -70,9 +70,12 @@ window_title_2 = "WARNING MESSAGE"
 
 class InputUi:
     def __init__(self, project, parent=None):
+
         self.project = project
         self.parent = parent
+        
         self.opv = self.parent.getOPVWidget()
+        self.menu = self.parent.getMenuWidget()
         
         self.analysis_ID = None
         self.global_damping = [0,0,0,0]
@@ -113,12 +116,13 @@ class InputUi:
     def initial_project_action(self, obj):
         if obj:
             self.project.none_project_action = False
-            self.parent.menuWidget.tree_widget.modify_model_setup_items_access(False) 
+            self.menu.tree_widget.modify_model_setup_items_access(False)
+            self.menu.tree_widget._updateItems() 
             self.parent.set_enable_menuBar(True)
             return True
         else:
             self.project.none_project_action = True
-            self.parent.menuWidget.tree_widget.modify_model_setup_items_access(True)
+            self.menu.tree_widget.modify_model_setup_items_access(True)
             self.parent.set_enable_menuBar(False)
             return False                 
 
@@ -287,9 +291,9 @@ class InputUi:
 
         read = self.processInput(RunAnalysisInput, self.project, self.analysis_ID, self.analysis_type_label)
         if read.complete:
-            if self.analysis_ID == 2:
+            if self.project.analysis_ID == 2:
                 self.before_run.check_modal_analysis_imported_data()
-            elif self.analysis_ID in [3,5,6]:
+            elif self.project.analysis_ID in [3,5,6]:
                 self.before_run.check_all_acoustic_criteria()
 
             self.after_run = self.project.get_post_solution_model_checks(opv=self.opv)
@@ -302,7 +306,7 @@ class InputUi:
         solution = self.project.get_structural_solution()
         if solution is None:
             return
-        if self.analysis_ID in [2, 4]:
+        if self.project.analysis_ID in [2, 4]:
             self.processInput(PlotStructuralModeShapeInput, self.project, self.opv)      
 
     def plotDisplacementField(self):
@@ -310,7 +314,7 @@ class InputUi:
         self.project.plot_pressure_field = False
         self.project.plot_stress_field = False
         solution = self.project.get_structural_solution()
-        if self.analysis_ID in [0,1,5,6]:
+        if self.project.analysis_ID in [0,1,5,6]:
             if solution is None:
                 return
             plot = self.processInput(PlotDisplacementFieldInput, self.project, self.opv)
@@ -324,7 +328,7 @@ class InputUi:
         solution = self.project.get_acoustic_solution()
         if solution is None:
             return
-        if self.analysis_ID in [2, 4]:
+        if self.project.analysis_ID in [2, 4]:
             self.processInput(PlotAcousticModeShapeInput, self.project, self.opv)           
 
     def plotAcousticPressureField(self):
@@ -332,34 +336,34 @@ class InputUi:
         self.project.plot_pressure_field = True
         self.project.plot_stress_field = False
         solution = self.project.get_acoustic_solution()
-        if self.analysis_ID in [3,5,6]:
+        if self.project.analysis_ID in [3,5,6]:
             if solution is None:
                 return
             self.processInput(PlotAcousticPressureFieldInput, self.project, self.opv)           
 
     def plotStructuralFrequencyResponse(self):
-        if self.analysis_ID in [0,1,5,6]:
+        if self.project.analysis_ID in [0,1,5,6]:
             solution = self.project.get_structural_solution()
             if solution is None:
                 return
             self.processInput(  PlotStructuralFrequencyResponseInput, self.project, self.opv, 
-                                self.analysis_method_label, solution  )
+                                self.project.analysis_method_label, solution  )
 
     def plotAcousticFrequencyResponse(self):
-        if self.analysis_ID in [3,5,6]:
+        if self.project.analysis_ID in [3,5,6]:
             solution = self.project.get_acoustic_solution()
             if solution is None:
                 return
             self.processInput(  PlotAcousticFrequencyResponseInput, self.project, self.opv, 
-                                self.analysis_method_label, solution )
+                                self.project.analysis_method_label, solution )
 
     def plot_TL_NR(self):
-        if self.analysis_ID in [3,5,6]:
+        if self.project.analysis_ID in [3,5,6]:
             solution = self.project.get_acoustic_solution()
             if solution is None:
                 return
             self.processInput(  Plot_TL_NR_Input, self.project, self.opv, 
-                                self.analysis_method_label, solution  )
+                                self.project.analysis_method_label, solution  )
 
     def plotPerforatedPlateConvergenceDataLog(self):
         if self.project.perforated_plate_dataLog:
@@ -368,7 +372,7 @@ class InputUi:
     def plotStressField(self):
         self.project.plot_pressure_field = False
         self.project.plot_stress_field = True
-        if self.analysis_ID in [0,1,5,6]:
+        if self.project.analysis_ID in [0,1,5,6]:
             solution = self.project.get_structural_solution()
             if solution is None:
                 return
@@ -376,15 +380,15 @@ class InputUi:
 
     def plotStressFrequencyResponse(self):
         solution = self.project.get_structural_solution()
-        if self.analysis_ID in [0,1,5,6]:
+        if self.project.analysis_ID in [0,1,5,6]:
             solution = self.project.get_structural_solution()
             if solution is None:
                 return
-            self.processInput(PlotStressFrequencyResponseInput, self.project, self.opv, self.analysis_method_label)
+            self.processInput(PlotStressFrequencyResponseInput, self.project, self.opv, self.project.analysis_method_label)
 
     def plotReactionsFrequencyResponse(self):
-        if self.analysis_ID in [0,1,5,6]:
-            self.processInput(PlotReactionsInput, self.project, self.opv, self.analysis_method_label)
+        if self.project.analysis_ID in [0,1,5,6]:
+            self.processInput(PlotReactionsInput, self.project, self.opv, self.project.analysis_method_label)
 
     def animationSettings(self):
         self.processInput(AnimationSettingsInput, self.project, self.opv)

@@ -2863,6 +2863,7 @@ class Preprocessor:
         
         for index, element in enumerate(self.structural_elements.values()):
             element.sub_transformation_matrix = self.transformation_matrices[index, :, :]
+            element._element_rotation_matrix()
             element.section_directional_vectors = self.transformation_matrices[index, :, :]
             element.section_rotation_xyz_undeformed = self.section_rotations_xyz[index,:]
 

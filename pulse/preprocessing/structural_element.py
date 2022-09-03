@@ -298,8 +298,9 @@ class StructuralElement:
         
         mass_matrix_gcs : Element mass matrix in the global coordinate system.
         """
-        self._rot = R = self.element_rotation_matrix = self._element_rotation_matrix()
-        Rt = self.transpose_rotation_matrix = self.element_rotation_matrix.T
+        # self._rot = R = self.element_rotation_matrix = self._element_rotation_matrix()
+        R = self.element_rotation_matrix
+        Rt = self.transpose_rotation_matrix
         if self.element_type in ['pipe_1','pipe_2']:
             stiffness = Rt @ self.stiffness_matrix_pipes() @ R
             mass = Rt @ self.mass_matrix_pipes() @ R
@@ -419,6 +420,8 @@ class StructuralElement:
         R = np.zeros((DOF_PER_ELEMENT, DOF_PER_ELEMENT), dtype=float)
         # self.sub_transformation_matrix = _rotation_matrix(self.delta_x, self.delta_y, self.delta_z)
         R[0:3, 0:3] = R[3:6, 3:6] = R[6:9, 6:9] = R[9:12, 9:12] = self.sub_transformation_matrix
+        self._rot = self.element_rotation_matrix = R
+        self.transpose_rotation_matrix = R.T
         return R
     
     def _inverse_element_rotation_matrix(self):

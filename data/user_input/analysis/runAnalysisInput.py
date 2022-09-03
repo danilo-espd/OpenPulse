@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 from pulse.processing.solution_acoustic import SolutionAcoustic
+from pulse.postprocessing.save_data import SaveData
+from pulse.postprocessing.read_data import ReadData
 from data.user_input.project.printMessageInput import PrintMessageInput
 from data.user_input.project.loadingScreen import LoadingScreen
 
@@ -41,7 +43,7 @@ class RunAnalysisInput(QDialog):
 
         self.project = project
         self.solve = None
-        self.analysis_ID = analysis_ID
+        self.analysis_ID = project.analysis_ID
         self.analysis_type_label = analysis_type_label
         self.frequencies = self.project.frequencies
         self.damping = self.project.global_damping
@@ -224,6 +226,9 @@ class RunAnalysisInput(QDialog):
             self.project.set_structural_reactions([ self.dict_reactions_at_constrained_dofs,
                                                     self.dict_reactions_at_springs,
                                                     self.dict_reactions_at_dampers  ])
+        
+        save = SaveData(self.project)
+        # read = ReadData(self.project)
 
         self.project.time_to_postprocess = time() - t0
         _times =  [self.project.time_to_process_cross_sections, self.project.time_to_preprocess_model, self.project.time_to_solve_model, self.project.time_to_postprocess]

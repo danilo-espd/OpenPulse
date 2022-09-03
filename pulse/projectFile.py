@@ -156,16 +156,38 @@ class ProjectFile:
         
         preferences = {}
         if "User interface preferences" in sections:
+
+            #temporary default preferences to maintain compatibility with the other versions
+            background_color = '(0,0,0)'
+            font_color = '(1,1,1)'
+            nodes_color = '(255,255,63)'
+            lines_color = '(255,255,255)'
+            elements_color = '(255,255,255)'
+            transparency = 0.8
+            OpenPulse_logo = '1'
+            mopt_logo = '1'
+            reference_scale = '1'
+
             config_preferences = config['User interface preferences']
-            background_color = config_preferences['background color']
-            font_color = config_preferences['font color']
-            nodes_color = config_preferences['nodes color']
-            lines_color = config_preferences['lines color']
-            elements_color = config_preferences['elements color']
-            transparency = float(config_preferences['transparency'])
-            OpenPulse_logo = config_preferences['openpulse logo']
-            mopt_logo = config_preferences['mopt logo']
-            reference_scale = config_preferences['reference scale']
+            keys = config_preferences.keys() 
+            if 'background color' in keys:
+                background_color = config_preferences['background color']
+            if 'font color' in keys:
+                font_color = config_preferences['font color']
+            if 'nodes color' in keys:
+                nodes_color = config_preferences['nodes color']
+            if 'lines color' in keys:
+                lines_color = config_preferences['lines color']
+            if 'elements color' in keys:
+                elements_color = config_preferences['elements color']
+            if 'transparency' in keys:
+                transparency = float(config_preferences['transparency'])
+            if 'openpulse logo' in keys:
+                OpenPulse_logo = config_preferences['openpulse logo']
+            if 'mopt logo' in keys:
+                mopt_logo = config_preferences['mopt logo']
+            if 'reference scale' in keys:
+                reference_scale = config_preferences['reference scale']
     
             background_color = background_color[1:-1].split(",")
             background_color = tuple([float(val) for val in background_color])

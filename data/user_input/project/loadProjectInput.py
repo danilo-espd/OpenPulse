@@ -15,6 +15,7 @@ from PyQt5 import uic
 class LoadProjectInput(QDialog):
     def __init__(self, project, opv, config, path, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
         self.project = project
         self.opv = opv
         self.config = config
